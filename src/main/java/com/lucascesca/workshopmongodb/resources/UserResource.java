@@ -12,6 +12,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/users")
@@ -57,7 +58,20 @@ public class UserResource {
     }
 
     @GetMapping(value = "/{id}/posts")
-    public ResponseEntity<List<Post>> getPost(@PathVariable String id) {
+    public ResponseEntity<List<Post>> getPosts(@PathVariable String id) {
         return ResponseEntity.ok().body(service.findById(id).getPosts());
+    }
+
+    // My solution
+    @GetMapping(value = "/{id}/posts/{postId}")
+    public ResponseEntity<Post> getUserPost(@PathVariable String id, @PathVariable String postId) {
+        User user = service.findById(id);
+        Post post = null;
+        for (Post p : user.getPosts()) {
+            if (p.getId().toLowerCase().equals(postId)) {
+                post = p;
+            }
+        }
+        return ResponseEntity.ok().body(post);
     }
 }
